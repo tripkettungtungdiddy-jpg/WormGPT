@@ -34,8 +34,7 @@ exports.handler = async function(event, context) {
 
         // DİKKAT: Senin panele (AI Studio) özel model adı buraya entegre edildi.
 // Google'ın doğrudan "daha yenisini kullan" uyarısı üzerine modeli gemini-2.5-flash olarak güncelliyoruz
-const url = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=${apiKey}`;
-        const response = await fetch(url, {
+const url = `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-pro-latest:generateContent?key=${apiKey}`;        const response = await fetch(url, {
             method: "POST",
             headers: { "Content-Type": "application/json" },
             body: JSON.stringify({
