@@ -34,8 +34,7 @@ exports.handler = async function(event, context) {
 
         // Model ismi "gemini-1.5-flash-latest" olarak düzeltildi (Sürüm uyuşmazlığı hatasını çözer)
 // Model adını en kararlı ana model olan "gemini-1.5-pro" veya güncel "gemini-2.5-flash" yapıyoruz
-const url = `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-pro:generateContent?key=${apiKey}`;
-        const response = await fetch(url, {
+const url = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=${apiKey}`;        const response = await fetch(url, {
             method: "POST",
             headers: { "Content-Type": "application/json" },
             body: JSON.stringify({
