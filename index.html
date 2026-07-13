@@ -46,12 +46,10 @@
         const sendBtn = document.getElementById('send-btn');
         const chatContainer = document.getElementById('chat-container');
 
-        // Enter tuşu dinleyicisi
         inputField.addEventListener('keypress', function(e) {
             if (e.key === 'Enter') sendMessage();
         });
         
-        // Buton tıklama dinleyicisi
         sendBtn.addEventListener('click', sendMessage);
 
         function appendMessage(text, className) {
@@ -67,15 +65,13 @@
             const prompt = inputField.value.trim();
             if (!prompt) return;
 
-            // Kullanıcı mesajını ekle
             appendMessage(prompt, 'user-message');
             inputField.value = '';
             
-            // İstek sırasında alanları kilitle
             inputField.disabled = true;
             sendBtn.disabled = true;
 
-            const loadingDiv = appendMessage('Sisteme sızılıyor, veri işleniyor...', 'bot-message');
+            const loadingDiv = appendMessage('Veri işleniyor...', 'bot-message');
 
             try {
                 const response = await fetch('/api/chat', {
@@ -85,12 +81,11 @@
                 });
 
                 const data = await response.json();
-                loadingDiv.remove(); // Yükleniyor yazısını kaldır
+                loadingDiv.remove(); 
 
                 if (response.ok && data.reply) {
                     appendMessage(data.reply, 'bot-message');
                 } else {
-                    // Backend'den dönen temiz hata mesajını ekrana bas
                     appendMessage(`Bağlantı Reddedildi: ${data.error || "Bilinmeyen sunucu hatası."}`, 'error-message');
                 }
 
@@ -98,7 +93,6 @@
                 loadingDiv.remove();
                 appendMessage(`Ağ Hatası: Sunucuya ulaşılamıyor. Detay: ${error.message}`, 'error-message');
             } finally {
-                // Hata da olsa işlem de bitse kilitleri aç
                 inputField.disabled = false;
                 sendBtn.disabled = false;
                 inputField.focus();

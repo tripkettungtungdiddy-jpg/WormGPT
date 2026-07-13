@@ -22,20 +22,19 @@ exports.handler = async function(event, context) {
     try {
         const body = JSON.parse(event.body);
         const prompt = body.prompt;
-        
-        // API anahtarı fonksiyon her tetiklendiğinde taze olarak okunur
         const apiKey = process.env.GEMINI_API_KEY;
 
         if (!apiKey) {
             return {
                 statusCode: 500,
                 headers: { "Access-Control-Allow-Origin": "*" },
-                body: JSON.stringify({ error: "Sistem Hatası: GEMINI_API_KEY sunucuda tanımlı değil!" })
+                body: JSON.stringify({ error: "Sistem Hatası: GEMINI_API_KEY bulunamadı." })
             };
         }
 
-// v1beta yerine v1 yazıp dene, bu daha yaygındır
-const url = `https://generativelanguage.googleapis.com/v1/models/gemini-1.5-flash:generateContent?key=${apiKey}`;
+        // Model ismi "gemini-1.5-flash-latest" olarak düzeltildi (Sürüm uyuşmazlığı hatasını çözer)
+        const url = `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash-latest:generateContent?key=${apiKey}`;
+
         const response = await fetch(url, {
             method: "POST",
             headers: { "Content-Type": "application/json" },
@@ -46,19 +45,17 @@ const url = `https://generativelanguage.googleapis.com/v1/models/gemini-1.5-flas
 
         const data = await response.json();
 
-        // Gemini API'den gelen olası hataları yakala
+        // Gemini API'den gelen olası hataları doğrudan yakala
         if (data.error) {
              return {
                 statusCode: 500,
                 headers: { "Access-Control-Allow-Origin": "*" },
-                body: JSON.stringify({ error: data.error.message || "Gemini API isteği reddetti." })
+                body: JSON.stringify({ error: data.error.message })
             };
         }
 
-        // Karmaşık JSON verisinden sadece metni sök al
-        const replyText = data.candidates?.[0]?.content?.parts?.[0]?.text || "Boş veya anlamsız yanıt alındı.";
+        const replyText = data.candidates[0].content.parts[0].text;
 
-        // Arayüze sadece temiz cevabı (replyText) gönder
         return {
             statusCode: 200,
             headers: {
