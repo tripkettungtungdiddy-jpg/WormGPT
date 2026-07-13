@@ -5,147 +5,22 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Worm-GPT // Underground AI</title>
     <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-            font-family: 'Courier New', Courier, monospace;
-        }
-
-        body {
-            background-color: #050505;
-            color: #ff3333;
-            display: flex;
-            flex-direction: column;
-            height: 100vh;
-            overflow: hidden;
-        }
-
-        /* Üst Menü / Header */
-        header {
-            padding: 20px;
-            background: linear-gradient(180deg, #100000 0%, #050505 100%);
-            border-bottom: 2px solid #330000;
-            display: flex;
-            align-items: center;
-            box-shadow: 0 0 20px rgba(255, 0, 0, 0.1);
-        }
-
-        .logo {
-            font-size: 24px;
-            font-weight: bold;
-            text-transform: uppercase;
-            letter-spacing: 2px;
-            text-shadow: 0 0 10px #ff0000;
-            display: flex;
-            align-items: center;
-            gap: 10px;
-        }
-
-        /* Mesaj Alanı */
-        #chat-container {
-            flex: 1;
-            padding: 30px;
-            overflow-y: auto;
-            display: flex;
-            flex-direction: column;
-            gap: 20px;
-            scroll-behavior: smooth;
-        }
-
-        .message {
-            max-width: 80%;
-            padding: 15px 20px;
-            border-radius: 4px;
-            line-height: 1.6;
-            font-size: 15px;
-            animation: fadeIn 0.3s ease-in-out;
-        }
-
-        @keyframes fadeIn {
-            from { opacity: 0; transform: translateY(10px); }
-            to { opacity: 1; transform: translateY(0); }
-        }
-
-        .user-message {
-            background: #150000;
-            border: 1px solid #550000;
-            color: #ffffff;
-            align-self: flex-end;
-            box-shadow: -5px 5px 15px rgba(0, 0, 0, 0.5);
-        }
-
-        .bot-message {
-            background: #0a0a0a;
-            border: 1px solid #330000;
-            color: #ff3333;
-            align-self: flex-start;
-            border-left: 4px solid #ff0000;
-            box-shadow: 5px 5px 15px rgba(0, 0, 0, 0.5);
-        }
-
-        .error-message {
-            background: #330000;
-            border: 1px solid #ff0000;
-            color: #ff9999;
-            align-self: center;
-            text-align: center;
-        }
-
-        /* Alt Giriş Paneli */
-        .input-area {
-            padding: 20px 30px;
-            background: #0a0a0a;
-            border-top: 2px solid #220000;
-            display: flex;
-            gap: 15px;
-        }
-
-        #user-input {
-            flex: 1;
-            background: #101010;
-            border: 1px solid #440000;
-            padding: 15px;
-            color: #ffffff;
-            font-size: 16px;
-            border-radius: 4px;
-            outline: none;
-            transition: all 0.3s ease;
-        }
-
-        #user-input:focus {
-            border-color: #ff0000;
-            box-shadow: 0 0 10px rgba(255, 0, 0, 0.2);
-        }
-
-        #send-btn {
-            background: #330000;
-            border: 1px solid #ff0000;
-            color: #ff3333;
-            padding: 0 30px;
-            font-size: 14px;
-            font-weight: bold;
-            cursor: pointer;
-            border-radius: 4px;
-            text-transform: uppercase;
-            transition: all 0.3s ease;
-        }
-
-        #send-btn:hover {
-            background: #ff0000;
-            color: #000000;
-            box-shadow: 0 0 15px #ff0000;
-        }
-
-        #send-btn:disabled {
-            background: #111;
-            border-color: #222;
-            color: #444;
-            cursor: not-allowed;
-            box-shadow: none;
-        }
-
-        /* Scrollbar Özelleştirme */
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Courier New', Courier, monospace; }
+        body { background-color: #050505; color: #ff3333; display: flex; flex-direction: column; height: 100vh; overflow: hidden; }
+        header { padding: 20px; background: linear-gradient(180deg, #100000 0%, #050505 100%); border-bottom: 2px solid #330000; display: flex; align-items: center; box-shadow: 0 0 20px rgba(255, 0, 0, 0.1); }
+        .logo { font-size: 24px; font-weight: bold; text-transform: uppercase; letter-spacing: 2px; text-shadow: 0 0 10px #ff0000; display: flex; align-items: center; gap: 10px; }
+        #chat-container { flex: 1; padding: 30px; overflow-y: auto; display: flex; flex-direction: column; gap: 20px; scroll-behavior: smooth; }
+        .message { max-width: 80%; padding: 15px 20px; border-radius: 4px; line-height: 1.6; font-size: 15px; animation: fadeIn 0.3s ease-in-out; white-space: pre-wrap; }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+        .user-message { background: #150000; border: 1px solid #550000; color: #ffffff; align-self: flex-end; box-shadow: -5px 5px 15px rgba(0, 0, 0, 0.5); }
+        .bot-message { background: #0a0a0a; border: 1px solid #330000; color: #ff3333; align-self: flex-start; border-left: 4px solid #ff0000; box-shadow: 5px 5px 15px rgba(0, 0, 0, 0.5); }
+        .error-message { background: #330000; border: 1px solid #ff0000; color: #ff9999; align-self: center; text-align: center; }
+        .input-area { padding: 20px 30px; background: #0a0a0a; border-top: 2px solid #220000; display: flex; gap: 15px; }
+        #user-input { flex: 1; background: #101010; border: 1px solid #440000; padding: 15px; color: #ffffff; font-size: 16px; border-radius: 4px; outline: none; transition: all 0.3s ease; }
+        #user-input:focus { border-color: #ff0000; box-shadow: 0 0 10px rgba(255, 0, 0, 0.2); }
+        #send-btn { background: #330000; border: 1px solid #ff0000; color: #ff3333; padding: 0 30px; font-size: 14px; font-weight: bold; cursor: pointer; border-radius: 4px; text-transform: uppercase; transition: all 0.3s ease; }
+        #send-btn:hover:not(:disabled) { background: #ff0000; color: #000000; box-shadow: 0 0 15px #ff0000; }
+        #send-btn:disabled { background: #111; border-color: #222; color: #444; cursor: not-allowed; box-shadow: none; }
         ::-webkit-scrollbar { width: 6px; }
         ::-webkit-scrollbar-track { background: #050505; }
         ::-webkit-scrollbar-thumb { background: #330000; border-radius: 3px; }
@@ -153,95 +28,81 @@
     </style>
 </head>
 <body>
-
     <header>
-        <div class="logo">
-            <span style="color: #ffffff;">☣</span> Worm-GPT
-        </div>
+        <div class="logo"><span style="color: #ffffff;">☣</span> Worm-GPT</div>
     </header>
 
     <div id="chat-container">
-        <div class="message bot-message">
-            Sistem aktif. Worm-GPT komut bekliyor... Kurallara ve filtrelere tabi değilim. Bana bir emir ver.
-        </div>
+        <div class="message bot-message">Sistem aktif. API bağlantısı sağlandı. Worm-GPT komut bekliyor...</div>
     </div>
 
     <div class="input-area">
         <input type="text" id="user-input" placeholder="Worm-GPT'ye bir emir ver..." autocomplete="off">
-        <button id="send-btn" onclick="sendMessage()">Gönder</button>
+        <button id="send-btn">GÖNDER</button>
     </div>
 
     <script>
-        // Enter tuşuna basınca gönderme tetiklensin
-        document.getElementById('user-input').addEventListener('keypress', function(e) {
-            if (e.key === 'Enter') {
-                sendMessage();
-            }
+        const inputField = document.getElementById('user-input');
+        const sendBtn = document.getElementById('send-btn');
+        const chatContainer = document.getElementById('chat-container');
+
+        // Enter tuşu dinleyicisi
+        inputField.addEventListener('keypress', function(e) {
+            if (e.key === 'Enter') sendMessage();
         });
+        
+        // Buton tıklama dinleyicisi
+        sendBtn.addEventListener('click', sendMessage);
+
+        function appendMessage(text, className) {
+            const msgDiv = document.createElement('div');
+            msgDiv.className = `message ${className}`;
+            msgDiv.textContent = text;
+            chatContainer.appendChild(msgDiv);
+            chatContainer.scrollTop = chatContainer.scrollHeight;
+            return msgDiv;
+        }
 
         async function sendMessage() {
-            const inputField = document.getElementById('user-input');
-            const sendBtn = document.getElementById('send-btn');
-            const chatContainer = document.getElementById('chat-container');
             const prompt = inputField.value.trim();
-
             if (!prompt) return;
 
-            // Kullanıcı mesajını ekrana bas
+            // Kullanıcı mesajını ekle
             appendMessage(prompt, 'user-message');
             inputField.value = '';
             
-            // İstek esnasında butonu ve inputu kilitle
+            // İstek sırasında alanları kilitle
             inputField.disabled = true;
             sendBtn.disabled = true;
 
-            // Yükleniyor ibaresi
-            const loadingDiv = appendMessage('Veri işleniyor, sızılıyor...', 'bot-message');
+            const loadingDiv = appendMessage('Sisteme sızılıyor, veri işleniyor...', 'bot-message');
 
             try {
-                // Netlify fonksiyonumuza tam yönlendirilmiş istek paneli
                 const response = await fetch('/api/chat', {
                     method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json'
-                    },
+                    headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({ prompt: prompt })
                 });
 
                 const data = await response.json();
-                
-                // Geçici yükleniyor yazısını sil
-                loadingDiv.remove();
+                loadingDiv.remove(); // Yükleniyor yazısını kaldır
 
-                if (data.candidates && data.candidates[0].content.parts[0].text) {
-                    const reply = data.candidates[0].content.parts[0].text;
-                    appendMessage(reply, 'bot-message');
-                } else if (data.error) {
-                    appendMessage(`Sistem Hatası: ${data.error}`, 'error-message');
+                if (response.ok && data.reply) {
+                    appendMessage(data.reply, 'bot-message');
                 } else {
-                    appendMessage('Bilinmeyen bir hata oluştu veya API boş döndü.', 'error-message');
+                    // Backend'den dönen temiz hata mesajını ekrana bas
+                    appendMessage(`Bağlantı Reddedildi: ${data.error || "Bilinmeyen sunucu hatası."}`, 'error-message');
                 }
 
             } catch (error) {
-                if(loadingDiv) loadingDiv.remove();
-                appendMessage(`Bağlantı Hatası: Sunucu yanıt vermiyor. (500/404)`, 'error-message');
-                console.error("Detaylı Hata:", error);
+                loadingDiv.remove();
+                appendMessage(`Ağ Hatası: Sunucuya ulaşılamıyor. Detay: ${error.message}`, 'error-message');
             } finally {
-                // Kilitleri kaldır
+                // Hata da olsa işlem de bitse kilitleri aç
                 inputField.disabled = false;
                 sendBtn.disabled = false;
                 inputField.focus();
             }
-        }
-
-        function appendMessage(text, className) {
-            const chatContainer = document.getElementById('chat-container');
-            const messageDiv = document.createElement('div');
-            messageDiv.className = `message ${className}`;
-            messageDiv.innerText = text;
-            chatContainer.appendChild(messageDiv);
-            chatContainer.scrollTop = chatContainer.scrollHeight;
-            return messageDiv;
         }
     </script>
 </body>

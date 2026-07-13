@@ -1,0 +1,8 @@
+{
+  "name": "worm-gpt",
+  "version": "1.0.0",
+  "description": "Worm-GPT Core Engine",
+  "engines": {
+    "node": ">=18.0.0"
+  }
+}

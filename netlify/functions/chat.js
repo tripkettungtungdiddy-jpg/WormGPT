@@ -1,5 +1,5 @@
-exports.handler = async (event, context) => {
-    // CORS önlemi ve POST kontrolü
+exports.handler = async function(event, context) {
+    // Tarayıcı güvenlik (CORS) duvarını aşmak için ön kontrol
     if (event.httpMethod === "OPTIONS") {
         return {
             statusCode: 200,
@@ -13,48 +13,66 @@ exports.handler = async (event, context) => {
     }
 
     if (event.httpMethod !== "POST") {
-        return { statusCode: 405, body: "Method Not Allowed" };
+        return {
+            statusCode: 405,
+            body: JSON.stringify({ error: "Sistem: Sadece POST istekleri kabul edilir." })
+        };
     }
 
     try {
         const body = JSON.parse(event.body);
-        const API_KEY = process.env.GEMINI_API_KEY;
+        const prompt = body.prompt;
+        
+        // API anahtarı fonksiyon her tetiklendiğinde taze olarak okunur
+        const apiKey = process.env.GEMINI_API_KEY;
 
-        if (!API_KEY) {
-            return { 
-                statusCode: 500, 
-                headers: { "Content-Type": "application/json", "Access-Control-Allow-Origin": "*" },
-                body: JSON.stringify({ error: "Netlify panelinde GEMINI_API_KEY eksik veya girilmedi!" }) 
+        if (!apiKey) {
+            return {
+                statusCode: 500,
+                headers: { "Access-Control-Allow-Origin": "*" },
+                body: JSON.stringify({ error: "Sistem Hatası: GEMINI_API_KEY sunucuda tanımlı değil!" })
             };
         }
 
-        // Güncel Gemini 1.5 Flash API URL'si
-        const url = `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${API_KEY}`;
-        
+        const url = `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${apiKey}`;
+
         const response = await fetch(url, {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
             body: JSON.stringify({
-                contents: [{ parts: [{ text: body.prompt }] }]
+                contents: [{ parts: [{ text: prompt }] }]
             })
         });
 
         const data = await response.json();
 
+        // Gemini API'den gelen olası hataları yakala
+        if (data.error) {
+             return {
+                statusCode: 500,
+                headers: { "Access-Control-Allow-Origin": "*" },
+                body: JSON.stringify({ error: data.error.message || "Gemini API isteği reddetti." })
+            };
+        }
+
+        // Karmaşık JSON verisinden sadece metni sök al
+        const replyText = data.candidates?.[0]?.content?.parts?.[0]?.text || "Boş veya anlamsız yanıt alındı.";
+
+        // Arayüze sadece temiz cevabı (replyText) gönder
         return {
             statusCode: 200,
-            headers: { 
+            headers: {
                 "Content-Type": "application/json",
-                "Access-Control-Allow-Origin": "*" 
+                "Access-Control-Allow-Origin": "*"
             },
-            body: JSON.stringify(data)
+            body: JSON.stringify({ reply: replyText })
         };
 
-    } catch (err) {
-        return { 
-            statusCode: 500, 
-            headers: { "Content-Type": "application/json", "Access-Control-Allow-Origin": "*" },
-            body: JSON.stringify({ error: err.message }) 
+    } catch (error) {
+        return {
+            statusCode: 500,
+            headers: { "Access-Control-Allow-Origin": "*" },
+            body: JSON.stringify({ error: "Kritik Çökme: " + error.message })
         };
     }
 };
